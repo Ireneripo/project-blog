@@ -21,6 +21,8 @@ function DivisionGroupsDemo({
 
   const numOfItemsPerGroup = Math.floor(numOfItems / numOfGroups);
 
+  const totalNumInGroups = numOfGroups * numOfItemsPerGroup;
+
   const remainder = includeRemainderArea ? numOfItems % numOfGroups : null;
 
   // When we're splitting into 1-3 groups, display side-by-side
@@ -58,26 +60,31 @@ function DivisionGroupsDemo({
             className={clsx(styles.demoArea)}
             style={gridStructure}
           >
-            {range(numOfGroups).map((groupIndex) => (
-              <div
-                key={groupIndex}
-                className={styles.group}
-              >
-                {range(numOfItemsPerGroup).map((index) => {
-                  const totalInPreviousGroups = groupIndex * numOfItemsPerGroup;
+            {range(numOfGroups).map((groupIndex) => {
+              const totalInPreviousGroups = groupIndex * numOfItemsPerGroup;
 
-                  const layoutId = `${id}-${index + totalInPreviousGroups}`;
+              return (
+                <div
+                  key={groupIndex}
+                  className={styles.group}
+                >
+                  {range(
+                    totalInPreviousGroups,
+                    totalInPreviousGroups + numOfItemsPerGroup
+                  ).map((index) => {
+                    const layoutId = `${id}-${index}`;
 
-                  return (
-                    <motion.div
-                      key={layoutId}
-                      layout={layoutId}
-                      className={styles.item}
-                    />
-                  );
-                })}
-              </div>
-            ))}
+                    return (
+                      <motion.div
+                        key={layoutId}
+                        layout={layoutId}
+                        className={styles.item}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -85,14 +92,19 @@ function DivisionGroupsDemo({
           <div className={styles.remainderArea}>
             <p className={styles.remainderHeading}>Remainder Area</p>
 
-            {range(remainder).map((index) => {
-              return (
-                <div
-                  key={index}
-                  className={styles.item}
-                />
-              );
-            })}
+            {range(totalNumInGroups, numOfItems)
+              // .reverse()
+              .map((index) => {
+                const layoutId = `${id}-${index}`;
+
+                return (
+                  <motion.div
+                    key={layoutId}
+                    layout={layoutId}
+                    className={styles.item}
+                  />
+                );
+              })}
           </div>
         )}
 
